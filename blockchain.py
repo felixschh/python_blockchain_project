@@ -12,7 +12,7 @@ def get_last_blockchain_value():
 
 
 # writing a function to add ne values to the blockchain
-def add_transaction(sender, recipient, amount=1.00):
+def add_transaction(recipient, sender=owner, amount=1.00):
     """ Append a new value as well as the last blockchainvalue to the blockchain
     Arguments:
     : Sender of the coins
@@ -24,7 +24,7 @@ def add_transaction(sender, recipient, amount=1.00):
         'recipient': recipient, 
         'amount': amount
         }
-    open_transactions.append()
+    open_transactions.append(transaction)
 
 
 
@@ -33,7 +33,7 @@ def mine_block():
 
 # function to get the users input of the amount of transaction
 def get_transaction_value():
-    tx_recipient = input('Enter the senderecipient of the transaction: ')
+    tx_recipient = input('Enter the recipient of the transaction: ')
     tx_amount = float(input('Your transaction amount please: '))
     return tx_recipient, tx_amount
 
@@ -78,7 +78,9 @@ while waiting_for_input:
     """ unsing conditions to invoke functions depending on users input """
     if user_choice == '1':
         tx_data = get_transaction_value()
-        add_transaction(tx_amount, get_last_blockchain_value())
+        recipient, amount = tx_data
+        add_transaction(recipient, amount=amount)
+        print(open_transactions)
     elif user_choice == '2':
         print_blockchain_elements()
     elif user_choice == 'h':
