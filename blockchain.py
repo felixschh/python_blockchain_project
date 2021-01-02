@@ -17,24 +17,46 @@ def add_value(transaction_amount, last_transaction=[1]):
     """
 
 
-# refactoring
-def get_user_input():
+# function to get the users input of the amount of transaction
+def get_transaction_value():
     return float(input('Your transaction amount please: '))
 
+# function to receive users choices of inputs
+def get_user_choice():
+    return input('Your choice: ')
 
-# invoke get_user_input function for the first time
-tx_amount = get_user_input()
-add_value(tx_amount)
-
-
-# using while loop to start an infinte loop to add 'transactions' to the blockchain
-while True:
-    tx_amount = get_user_input()
-    add_value(tx_amount, get_last_blockchain_value())
-
-    # Output the blockchain list to console
+# Output the blockchain list to console
+def print_blockchain_elements():
     for block in blockchain:
         print('Outputting Block')
         print(block)
+
+
+
+# invoke get_user_input function to add a first value to the blockchain
+tx_amount = get_transaction_value()
+add_value(tx_amount)
+
+
+while True:
+    """ Printing out the different input options """
+    print('Please choose:')
+    print('1: Add a new transacion value')
+    print('2: Output the blocks of the blockchain')
+    print('q: Quit')
+    """ receiving users choice """
+    user_choice = get_user_choice()
+    """ unsing conditions to invoke functions depending on users input """
+    if user_choice == '1':
+        tx_amount = get_transaction_value()
+        add_value(tx_amount, get_last_blockchain_value())
+    elif user_choice == '2':
+        print_blockchain_elements()
+    elif user_choice == 'q':
+        break
+    else:
+        print('Input was invalid, please pick a value from the list!')
+    print('Choice registered!')  
+
 
 print('Done!')
