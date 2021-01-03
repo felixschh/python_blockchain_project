@@ -18,6 +18,8 @@ def hash_block(block):
 # defining a function to get the balance of the participants
 def get_balance(participant):
     tx_sender = [[tx['amount'] for tx in block['transaction'] if tx['sender'] == participant] for block in blockchain]
+    open_tx_sender = [tx['amount']for tx in open_transactions if tx['sender'] == participant]
+    tx_sender.append(open_tx_sender)
     amount_sent = 0
     for tx in tx_sender:
         if len(tx) > 0:
@@ -37,6 +39,11 @@ def get_last_blockchain_value():
     return blockchain[-1]
 
 
+def verify_transaction(transaction):
+    sender_balance = get_balance(transaction['sender'])
+    return sender_balance >= transaction['amount']
+
+
 # writing a function to add ne values to the blockchain
 def add_transaction(recipient, sender=owner, amount=1.00):
     """ Append a new value as well as the last blockchainvalue to the blockchain
@@ -50,10 +57,12 @@ def add_transaction(recipient, sender=owner, amount=1.00):
         'recipient': recipient, 
         'amount': amount
         }
-    open_transactions.append(transaction)
-    participants.add(sender)
-    participants.add(recipient)
-
+    if verify_transaction(transaction):
+        open_transactions.append(transaction)
+        participants.add(sender)
+        participants.add(recipient)
+        return True
+    return False
 
 # function to mine a block
 def mine_block():
@@ -64,12 +73,12 @@ def mine_block():
         'recipient': owner,
         'amount': MINING_REWARD
     }
-    """ mining a block is rewarded with a transaciton of 10 coins """
-    open_transactions.append(reward_transaction)
+    copied_transactions = open_transactions[:] 
+    copied_transactions.append(reward_transaction)
     block = {
         'previous_hash': hashed_block,
         'index': len(blockchain), 
-        'transaction': open_transactions
+        'transaction': copied_transactions
     }
     blockchain.append(block)
     return True
@@ -116,11 +125,14 @@ while waiting_for_input:
     print('q: Quit')
     """ receiving users choice """
     user_choice = get_user_choice()
-    """ unsing conditions to invoke functions depending on users input """
+    """ using conditions to invoke functions depending on users input """
     if user_choice == '1':
         tx_data = get_transaction_value()
         recipient, amount = tx_data
-        add_transaction(recipient, amount=amount)
+        if add_transaction(recipient, amount=amount):
+            print('Added transaction!')
+        else:
+            print('Transaction failed!')
         print(open_transactions)
     elif user_choice == '2':
         if mine_block():
