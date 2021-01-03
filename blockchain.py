@@ -1,9 +1,11 @@
 # defining our blockchain as an empty list
+MINING_REWARD = 10
+
+
 genesis_block = {
     'previous_hash': '',
     'index': 0, 
-    'transaction': []
-}
+    'transaction': []}
 blockchain = [genesis_block]
 open_transactions = []
 owner = 'Max'
@@ -57,8 +59,13 @@ def add_transaction(recipient, sender=owner, amount=1.00):
 def mine_block():
     last_block = blockchain[-1]
     hashed_block = hash_block(last_block)
-    print(hashed_block)
-
+    reward_transaction = {
+        'sender': 'MINING',
+        'recipient': owner,
+        'amount': MINING_REWARD
+    }
+    """ mining a block is rewarded with a transaciton of 10 coins """
+    open_transactions.append(reward_transaction)
     block = {
         'previous_hash': hashed_block,
         'index': len(blockchain), 
