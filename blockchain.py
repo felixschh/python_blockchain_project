@@ -9,9 +9,24 @@ open_transactions = []
 owner = 'Max'
 participants = {'Max'}
 
-# defining function to mine a block from open transactions
+# defining function to create a hashed block
 def hash_block(block):
     return '-'.join([str(block[key]) for key in block])
+
+# defining a function to get the balance of the participants
+def get_balance(participant):
+    tx_sender = [[tx['amount'] for tx in block['transaction'] if tx['sender'] == participant] for block in blockchain]
+    amount_sent = 0
+    for tx in tx_sender:
+        if len(tx) > 0:
+            amount_sent += tx[0]
+    tx_recipient = [[tx['amount'] for tx in block['transaction'] if tx['recipient'] == participant] for block in blockchain]
+    amount_received = 0
+    for tx in tx_recipient:
+        if len(tx) > 0:
+            amount_received += tx[0]
+    return amount_received - amount_sent
+
 
 # defining function that returns last blockchain value
 def get_last_blockchain_value():
@@ -50,6 +65,7 @@ def mine_block():
         'transaction': open_transactions
     }
     blockchain.append(block)
+    return True
 
 # function to get the users input of the amount of transaction
 def get_transaction_value():
@@ -100,7 +116,8 @@ while waiting_for_input:
         add_transaction(recipient, amount=amount)
         print(open_transactions)
     elif user_choice == '2':
-        mine_block()
+        if mine_block():
+            open_transactions = []
     elif user_choice == '3':
         print_blockchain_elements()
     elif user_choice == '4':
@@ -119,5 +136,6 @@ while waiting_for_input:
     if not verify_chain():
         print('Invalid blockchain!')
         break
+    print(get_balance('Max'))
 else:
     print('User left!')
