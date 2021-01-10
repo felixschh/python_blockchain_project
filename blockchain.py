@@ -170,6 +170,6 @@ while waiting_for_input:
     if not verify_chain():
         print('Invalid blockchain!')
         break
-    print(get_balance('Max'))
+    print('Balance of {}: {:6.2f}'.format('Max', get_balance('Max')))
 else:
     print('User left!')
