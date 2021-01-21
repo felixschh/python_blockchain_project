@@ -20,6 +20,26 @@ open_transactions = []
 owner = 'Max'
 participants = {'Max'}
 
+
+# load data from a .txt file
+def load_data():
+    with open('blockchain.txt', mode='r') as f:
+        file_content=f.readlines()
+        global blockchain
+        global open_transactions
+        blockchain = file_content[0]
+        open_transactions = file_content[1]
+    
+load_data()
+
+
+# save data in .txt file
+def save_data():
+    with open('blockchain.txt', mode='w') as f:
+        f.write(str(blockchain))
+        f.write('\n')
+        f.write(str(open_transactions))
+
 # function to validate hte proof of a block
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
@@ -88,6 +108,7 @@ def add_transaction(recipient, sender=owner, amount=1.00):
         open_transactions.append(transaction)
         participants.add(sender)
         participants.add(recipient)
+        save_data()
         return True
     return False
 
@@ -112,6 +133,7 @@ def mine_block():
         'proof': proof
     }
     blockchain.append(block)
+    save_data()
     return True
 
 # function to get the users input of the amount of transaction
