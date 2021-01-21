@@ -7,4 +7,4 @@ def hash_string_256(string):
 
 # defining function to create a hashed block
 def hash_block(block):
-    return hash_string_256((json.dumps(block, sort_keys=True).encode()).hexdigest())
+    return hash_string_256((json.dumps(block, sort_keys=True).encode()))
