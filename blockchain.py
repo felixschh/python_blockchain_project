@@ -1,4 +1,6 @@
 import functools
+import hashlib 
+import json
 # defining our blockchain as an empty list
 MINING_REWARD = 10
 
@@ -14,7 +16,7 @@ participants = {'Max'}
 
 # defining function to create a hashed block
 def hash_block(block):
-    return '-'.join([str(block[key]) for key in block])
+    return hashlib.sha256(json.dumps(block).encode()).hexdigest()
 
 # defining a function to get the balance of the participants
 def get_balance(participant):
