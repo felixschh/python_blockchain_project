@@ -1,6 +1,9 @@
 import functools
 import hashlib as hl
-import json
+from collections import OrderedDict
+# import from other files
+from hash_util import hash_string_256, hash_block
+
 # defining our blockchain as an empty list
 MINING_REWARD = 10
 
@@ -17,13 +20,14 @@ open_transactions = []
 owner = 'Max'
 participants = {'Max'}
 
+# function to validate hte proof of a block
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
     guess_hash = hl.sha256(guess).hexdigest()
     print(guess_hash)
     return guess_hash[0:2] == '00'
 
-
+# function to return if the proof is correct
 def proof_of_work():
     last_block = blockchain[-1]
     last_hash = hash_block(last_block)
@@ -32,9 +36,8 @@ def proof_of_work():
         proof += 1
     return proof
 
-# defining function to create a hashed block
-def hash_block(block):
-    return hl.sha256(json.dumps(block).encode()).hexdigest()
+
+
 
 # defining a function to get the balance of the participants
 def get_balance(participant):
@@ -75,11 +78,12 @@ def add_transaction(recipient, sender=owner, amount=1.00):
     : Recipient of the coins
     : Amount of the coins 
     """
-    transaction = {
-        'sender': sender, 
-        'recipient': recipient, 
-        'amount': amount
-        }
+    # transaction = {
+    #     'sender': sender, 
+    #     'recipient': recipient, 
+    #     'amount': amount
+    #     }
+    transaction = OrderedDict([('sender', sender), ('recipient', recipient, 'amount', amount)])
     if verify_transaction(transaction):
         open_transactions.append(transaction)
         participants.add(sender)
@@ -92,11 +96,13 @@ def mine_block():
     last_block = blockchain[-1]
     hashed_block = hash_block(last_block)
     proof = proof_of_work()
-    reward_transaction = {
-        'sender': 'MINING',
-        'recipient': owner,
-        'amount': MINING_REWARD
-    }
+    # reward_transaction = {
+    #     'sender': 'MINING',
+    #     'recipient': owner,
+    #     'amount': MINING_REWARD
+    # }
+    reward_transaction = OrderedDict(
+        [('sender', 'MINING'), ('recipient', owner), ('amount', MINING_REWARD)])
     copied_transactions = open_transactions[:] 
     copied_transactions.append(reward_transaction)
     block = {
