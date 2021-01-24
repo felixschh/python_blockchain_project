@@ -45,7 +45,7 @@ def load_data():
                     [('sender', tx['sender']), ('recipient', tx['recipient']), ('amount', tx['amount'])])
                 updated_transactions.append(updated_transaction)
             open_transactions = updated_transactions
-    except IOError:
+    except (IOError, IndexError):
         genesis_block = Block(0, '', [], 100, 0)
 
         blockchain = [genesis_block]
@@ -54,14 +54,15 @@ def load_data():
     finally:
         print('Cleanup!')
     
-load_data()
+# load_data()
 
 
 # save data in .txt file
 def save_data():
     try:
         with open('blockchain.txt', mode='w') as f:
-            f.write(json.dumps(blockchain))
+            saveable_chain = [block.__dict__ for block in blockchain]
+            f.write(json.dumps(saveable_chain))
             f.write('\n')
             f.write(json.dumps(open_transactions))
             # save_data = {
@@ -162,7 +163,6 @@ def mine_block():
     copied_transactions.append(reward_transaction)
     block = Block(len(blockchain), hashed_block, copied_transactions, proof)
     blockchain.append(block)
-    save_data()
     return True
 
 # function to get the users input of the amount of transaction
