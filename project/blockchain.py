@@ -11,6 +11,8 @@ from hash_util import hash_string_256, hash_block
 # defining our blockchain as an empty list
 MINING_REWARD = 10
 
+# change for update commit
+
 
 blockchain = []
 open_transactions = []
